@@ -85,7 +85,7 @@
             if (err) return callback(err);
             var garden_ctx = {
                 userCtx : JSON.parse(decodeURI($('#dashboard-topbar-session').data('userctx'))),
-                login_url : $('#dashboard-topbar-session').data('login') + '?redirect=' + encodeURIComponent(after_login_url)
+                login_url : $('#dashboard-topbar-session').data('login') + '?redirect=' + encodeURIComponent(window.location)
             };
 
             return callback(null, garden_ctx);
