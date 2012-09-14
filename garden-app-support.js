@@ -70,7 +70,8 @@
     exports.get_user_ctx = function(callback) {
         exports.on_topbar(function(err){
             if (err) return callback(err);
-            return callback(null, JSON.parse(decodeURI($('#dashboard-topbar-session').data('userctx'))));
+            var userctx = JSON.parse(decodeURI($('#dashboard-topbar-session').data('userctx')));
+            return callback(null, userctx);
         })
     }
 
