@@ -1,13 +1,10 @@
 (function (root, factory) {
-    if (typeof exports === 'object') {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like enviroments that support module.exports,
-        // like Node.
+    if (typeof define === 'function' && define.amd) {
+            // AMD. Register as an anonymous module.
+            define(['jquery'], factory);
+    } else if (typeof exports === 'object') {
         module.exports = factory(require('jquery'));
-    } else if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define(['jquer'], factory);
-    } else {
+    }  else {
         // Browser globals
         root.returnExports = factory(root.$);
     }
@@ -19,25 +16,33 @@
      * Callback when the topbar has loaded.
      */
     exports.on_topbar = function(/* optional*/ timeout, callback) {
-        if (isFunction(timeout)) {
-            callback = timeout;
-            timeout = 1000;
+
+        // retrieve arguments as array
+        var args = [];
+        for (var i = 0; i < arguments.length; i++) {
+            args.push(arguments[i]);
         }
+        callback = args.pop();
+        timeout = 1000;
+        if (args.length > 0)  timeout = args.shift();
+
         if ($('#dashboard-topbar').data('ready')) {
-            return callback();
+            return callback(null);
         }
         var has_returned = false;
         var on_complete = function(err) {
             if (!has_returned) {
                  has_returned = true;
-                 callback(err);
+                callback(err);
              }
         }
         setTimeout(function() {
-            on_complete('Timeout waiting for the topbar');
+            on_complete(new Error('Timeout waiting for the topbar'));
         }, timeout);
 
-        $('#dashboard-topbar').live('ready', on_complete);
+        $('#dashboard-topbar').live('ready', function(jquery_event){
+            on_complete(null);
+        });
 
     }
 
@@ -62,10 +67,10 @@
     }
 
 
-    exports.get_user_ctx = function() {
+    exports.get_user_ctx = function(callback) {
         exports.on_topbar(function(err){
             if (err) return callback(err);
-            return JSON.parse(decodeURI($('#dashboard-topbar-session').data('userctx')));
+            return callback(null, JSON.parse(decodeURI($('#dashboard-topbar-session').data('userctx'))));
         })
     }
 
@@ -105,20 +110,4 @@
 
 
 
-
-exports.addActivityEntry = function(user, actionText, actionUrl, kanso_db_instance, callback) {
-    try {
-        var entry = {
-            date : new Date.getTime(),
-            user : user,
-            actionText : actionText,
-            actionUrl : actionUrl,
-            type : 'garden.app.activity'
-        }
-        kanso_db_instance.saveDoc(entry, callback);
-
-    } catch(e){
-        callback(e);
-    }
-}
 
