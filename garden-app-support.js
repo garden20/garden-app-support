@@ -23,7 +23,7 @@
             args.push(arguments[i]);
         }
         callback = args.pop();
-        timeout = 1000;
+        timeout = 5000;
         if (args.length > 0)  timeout = args.shift();
 
         if ($('#dashboard-topbar').data('ready')) {
@@ -36,11 +36,21 @@
                 callback(err);
              }
         }
+
+        var iv = setInterval(function (){
+          if ($('#dashboard-topbar').data('ready')) {
+            return on_complete(null);
+          }
+        })
+
         setTimeout(function() {
+            clearInterval(iv);
             on_complete(new Error('Timeout waiting for the topbar'));
         }, timeout);
 
-        $('#dashboard-topbar').live('ready', function(jquery_event){
+
+
+        $('#dashboard-topbar').on('ready', function(jquery_event){
             on_complete(null);
         });
 
