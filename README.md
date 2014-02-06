@@ -4,9 +4,10 @@ This is a module that will be useful for apps that want to be used in the [garde
 
 It provides:
 
- * Support for detecting events in the garden
- * Obtaining information about a user
+ * Support for detecting events in the garden.
+ * Obtaining information about a user.
  * Support for creating urls to other apps that can be mapped at runtime.
+ * Including changelogs in your application for rendering on the update app screen.
 
 ## Install
 
@@ -22,6 +23,12 @@ case:
 "dependencies": {
     "garden-app-support": null
 }
+```
+
+To include a changelog with your app, add:
+
+```json
+"changelog": "Changes.md"
 ```
 
 Run kanso install to install in your packages directory:
